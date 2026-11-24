@@ -304,7 +304,9 @@ bool create_initializer_global(Engine *engine) {
 bool init_js(const EngineConfig& config) {
   JS_Init();
 
-  JSContext *cx = JS_NewContext(JS::DefaultHeapMaxBytes);
+  // SpiderMonkey defaults the GC heap max to 32 MB (JS::DefaultHeapMaxBytes);
+  // lift it so the embedder's linear-memory cap is the only memory bound.
+  JSContext *cx = JS_NewContext(0xffffffff);
   if (!cx) {
     return false;
   }
